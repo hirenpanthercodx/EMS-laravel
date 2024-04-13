@@ -1,0 +1,272 @@
+$misc-inner-max-width: 750px;
+
+.misc-wrapper {
+  display: flex;
+  flex-basis: 100%;
+  min-height: 100vh;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+
+  .misc-inner {
+    position: relative;
+    max-width: $misc-inner-max-width;
+  }
+
+  .brand-logo {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    margin: 0;
+    .brand-text {
+      font-weight: 600;
+    }
+  }
+}
+
+@media (max-height: 625px) {
+  .misc-wrapper {
+    .misc-inner {
+      margin-top: 4rem;
+    }
+  }
+}
+
+.auth-wrapper {
+  background-color: #f8f8f8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.card-login {
+  width: 400px;
+  box-shadow: 0 4px 24px 0 rgba(34,41,47,.1);
+  transition: all .3s ease-in-out, background 0s, color 0s, border-color 0s;
+  background-color: #fff;
+  background-clip: initial;
+  border: 0 solid rgba(34, 41, 47, .125);
+  border-radius: 0.428rem;
+}
+
+.card {
+  box-shadow: 0 4px 24px 0 rgba(34,41,47,.1);
+  transition: all .3s ease-in-out, background 0s, color 0s, border-color 0s;
+  background-color: #fff;
+  background-clip: initial;
+  border: 0 solid rgba(34, 41, 47, .125);
+  border-radius: 0.428rem;
+}
+
+.form-color {
+  color: #5e5873;
+}
+
+.react-hot-toast {
+  font-size: 1rem;
+  color: #6e6b7b;
+  letter-spacing: 0.14px;
+  box-shadow: 0px 4px 10px -4px rgb(58 53 65 / 60%);
+  border-radius: 0.357rem;
+}
+
+.header-overlap {
+  z-index: 999 !important;
+}
+
+/*================================================================================
+	Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template
+	Version: 2.0
+	Author: PIXINVENT
+	Author URL: http://www.themeforest.net/user/pixinvent
+================================================================================
+
+NOTE:
+------
+PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
+WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+/* Scheduler Custom style */
+.fc .fc-button-primary {
+    background-color: transparent !important;
+    border-color: #045653 !important;
+    color: #045c58 !important;
+    border-radius: 5px;
+  }
+
+  .fc .fc-toolbar .fc-prev-button, .fc .fc-toolbar .fc-next-button {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    color: #6e6b7b !important;
+  }
+
+  .fc .fc-button-primary:focus {
+    box-shadow: 0 0 0 0.2rem rgba(4, 109, 109, 0.5) !important;
+    background-color: #cde2e1!important;
+  }
+
+  .fc .fc-button{
+    text-transform: capitalize !important;
+  }
+
+
+
+  .react-dataTable {
+    .hlidmt {
+      background-color: 44%;
+    }
+    .khKjDK {
+      background-color: 44%;
+      color: #b4b7bd;
+    }
+
+    .rdt_Table {
+      background: #343d55 ;
+      color: #b4b7bd;
+
+      & > div:first-child:not(.rdt_TableHead):not(.rdt_TableBody) {
+        color: #b4b7bd;
+        background-color: 44%;
+      }
+    }
+    .rdt_TableHead {
+      .rdt_TableHeadRow {
+        background-color: #343d55 ;
+        border-color: #3b4253;
+        .rdt_TableCol {
+          color: #b4b7bd;
+          div[role='button'] {
+            color: #b4b7bd;
+          }
+        }
+        .rdt_TableCol_Sortable {
+          color: #d0d2d6;
+
+          svg {
+            stroke: #d0d2d6;
+          }
+        }
+      }
+    }
+    .rdt_TableBody {
+      .expandable-content {
+        background-color: #283046;
+        color: #b4b7bd;
+      }
+      .rdt_TableRow {
+        background-color: #283046;
+        color: #b4b7bd;
+        border-color: #3b4253;
+        .rdt_TableCell {
+          color: #b4b7bd;
+          .column-action {
+            svg {
+              stroke: #b4b7bd;
+            }
+          }
+        }
+        button {
+          &:hover:not(:disabled) {
+            background-color: #161d31;
+          }
+          svg {
+            color: #b4b7bd;
+          }
+        }
+        .permissions-actions {
+          button:hover {
+            background-color: transparent;
+          }
+        }
+      }
+    }
+    .rdt_Pagination {
+      color: #b4b7bd;
+      border-color: #3b4253;
+      background-color: #283046;
+
+      svg {
+        fill: #b4b7bd;
+      }
+    }
+  }
+
+  .permission-header {
+    @media (max-width: 740px) {
+      .add-permission {
+        margin-top: 1rem !important;
+      }
+    }
+  }
+  
+  .rdt_Pagination {
+    select {
+      min-width: 30px;
+      &:focus,
+      &:active {
+        outline: 0;
+      }
+    }
+  }
+  
+  .dataTable-filter {
+    max-width: 220px;
+  }
+  
+  .dataTable-select {
+    width: 5rem;
+    &:not([multiple='multiple']) {
+      margin-left: 0.25rem;
+      margin-right: 0.25rem;
+      background-position: calc(100% - 12px) 10px, calc(100% - 20px) 12px, 100% 0;
+      background-size: 10px 10px, 10px 10px;
+    }
+  }
+  
+  .dark-layout {
+    .app-user-list {
+      header {
+        background-color: #283046;
+      }
+    }
+  }
+
+  .rdt_Pagination {
+    color: #b4b7bd;
+    background-color: #283046;
+    button {
+      svg {
+        fill: #b4b7bd;
+      }
+      &[disabled] svg {
+        fill: #676d7d;
+      }
+    }
+  }
+
+  .f_flex{
+    display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 21px;
+  margin-bottom: 21px;
+  }
+  .f_flex b{
+    margin-left: 15px
+  }
+  .f_flex div{
+    margin-right: 15px
+  }
+  .f_flex .m{
+    margin-right: 2px
+  }
+  .f_flex .margin{
+    margin-right: 30px
+  }
+  .f_flex .m_client{
+    margin-right: 2px
+  }
+  

@@ -1,0 +1,31 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "@popperjs/core": "^2.11.6",
+        "@vitejs/plugin-react": "^4.2.0",
+        "axios": "^1.6.4",
+        "bootstrap": "^5.2.3",
+        "laravel-vite-plugin": "^1.0.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "sass": "^1.56.1",
+        "vite": "^5.0.0"
+    },
+    "dependencies": {
+        "@fullcalendar/daygrid": "^6.1.11",
+        "@fullcalendar/react": "^6.1.11",
+        "@fullcalendar/timegrid": "^6.1.11",
+        "react-data-table-component": "^7.6.2",
+        "react-hook-form": "^7.51.2",
+        "react-hot-toast": "^2.4.1",
+        "react-paginate": "^8.2.0",
+        "react-router-dom": "^6.22.3",
+        "react-select": "^5.8.0",
+        "reactstrap": "^9.2.2"
+    }
+}
