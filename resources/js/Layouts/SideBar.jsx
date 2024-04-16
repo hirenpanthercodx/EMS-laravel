@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 function Sidebar() {
   const navigate = useNavigate()
+  const userData = JSON.parse(localStorage.getItem('userData'))
 
   return (
     <>
@@ -24,19 +25,23 @@ function Sidebar() {
                   <i className="nav-icon fas fa-columns" />
                   <p>Dashboard</p>
                 </span>
-              </li>     
-              <li className="nav-item">
-                <span className={`${window.location.href.includes('calendar') && 'active'} nav-link `} onClick={() => navigate(`/calendar`)}>
-                  <i className="nav-icon far fa-calendar-alt" />
-                  <p>Calendar</p>
-                </span>
-              </li>
-              <li className="nav-item">
-                <span className={`${window.location.href.includes('employee') && 'active'} nav-link `} onClick={() => navigate(`/employee`)}>
-                  <i className="nav-icon far fa-image" />
-                  <p>Employee</p>
-                </span>
-              </li>
+              </li> 
+              {userData?.role?.permissions?.view_calendar &&
+                <li className="nav-item">
+                  <span className={`${window.location.href.includes('calendar') && 'active'} nav-link `} onClick={() => navigate(`/calendar`)}>
+                    <i className="nav-icon far fa-calendar-alt" />
+                    <p>Calendar</p>
+                  </span>
+                </li>
+              }    
+              {userData?.role?.permissions?.view_employee &&
+                <li className="nav-item">
+                  <span className={`${window.location.href.includes('employee') && 'active'} nav-link `} onClick={() => navigate(`/employee`)}>
+                    <i className="nav-icon far fa-image" />
+                    <p>Employee</p>
+                  </span>
+                </li>
+              }
             </ul>
           </nav>
         </div>

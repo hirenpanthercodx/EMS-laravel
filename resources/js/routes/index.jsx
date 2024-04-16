@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import routes from "./routes";
 import Main from "../Layouts/Main";
@@ -8,6 +8,7 @@ import axios from "axios";
 
 const Router = () => {
   const token = localStorage.getItem('token')
+  const [flag, setFlag] = useState(false)
 
   const getLogginInfo = async () => {
     if (localStorage.getItem('userData')) {
@@ -15,6 +16,7 @@ const Router = () => {
         .then((res) => {
           const userData = JSON.stringify(res.data.data)
           localStorage.setItem('userData', userData)
+          setFlag(!flag)
       }).catch((err) => console.log('err', err))
     }
   }

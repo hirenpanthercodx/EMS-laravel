@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Cartalyst\Sentinel\Laravel\Facades\Sentinel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
@@ -18,8 +19,8 @@ class AuthController extends Controller
             Session::put('auth_user', Auth::user());
 
             $success['token'] = $user->createToken('MyApp')->plainTextToken;
-            $success['data'] = $user; 
-
+            $success['user'] = $user; 
+            $success['role'] = Sentinel::findRoleById($user->id); 
             $response = [
                 'success' => true,
                 'data' => $success,

@@ -12,12 +12,16 @@ function Employee() {
   const [loader, setLoader] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalRecord, setTotalRecord] = useState(0)
+  const [sort, setSort] = useState('desc')
+  const [sortField, setSortField] = useState('created_at')
 
   const employeeList = () => {
     setLoader(true)
     const data = {
       perPage: 10,
-      page: currentPage
+      page: currentPage,
+      order_by: sort ? sort : null,
+      sort_by: sortField ? sortField : null
     }
     EmployeeService.employeeData(data)
     .then(res => {
@@ -29,29 +33,33 @@ function Employee() {
 
   useEffect(() => {
     employeeList()
-  }, [currentPage])
+  }, [currentPage, sort, sortField])
 
   const OrdersColumns  = [
     {
       name: 'Id',
       // sortable: true,
-      maxWidth:'150px',
-      sortField: 'order_number',
-      selector: row => row?.order_number,
-      cell: row => row?.employee_id
+      maxwidth:'150px',
+      sortField: 'element_id',
+      selector: row => row?.employee_id,
+      cell: row => {
+        return (
+          <div onClick={() => navigate(`/employee/edit/${row?.id}`)} className='text-bold' style={{cursor: 'pointer'}}>{row?.employee_id}</div>
+        )
+      }
     },
     {
       name: 'Name',
       sortField: 'Client',
-      minWidth: '150px',
-      maxWidth:"300px",
+      minwidth: '150px',
+      maxwidth:"300px",
       className: 'line-ellipsis',
       selector: row => row?.name
     },
     {
       name: 'Email',
-      minWidth: '200px',
-      maxWidth:'500px',
+      minwidth: '200px',
+      maxwidth:'500px',
       sortField: 'project',
       className: 'line-ellipsis',
       selector: row => row?.email
@@ -59,23 +67,36 @@ function Employee() {
     {
       name: 'Gender',
       sortField: 'Client',
-      minWidth: '50px',
-      maxWidth:"200px",
+      minwidth: '50px',
+      maxwidth:"200px",
       className: 'line-ellipsis',
       selector: row => row?.gender
     },
     {
       name: 'Department',
       sortField: 'Client',
-      minWidth: '50px',
-      maxWidth:"200px",
+      minwidth: '50px',
+      maxwidth:"200px",
       className: 'line-ellipsis',
       selector: row => row?.department
     },
     {
       name: 'Project',
-      maxWidth:'150px',
-      minWidth: '180px',
+      maxwidth:'150px',
+      minwidth: '180px',
+      className: 'line-ellipsis',
+      selector: row =>  (
+        JSON.parse(row?.project)?.map((data, i) => {
+          return data + (((JSON.parse(row?.project))?.length - 1 > i) ? ", " : "") 
+        }) 
+      )
+    },
+    {
+      name: 'Created_at',
+      sortField: 'created_at',
+      sortable: true,
+      maxwidth:'150px',
+      minwidth: '180px',
       className: 'line-ellipsis',
       selector: row =>  (
         JSON.parse(row?.project)?.map((data, i) => {
@@ -117,6 +138,13 @@ function Employee() {
     }
   }
 
+  const handleSort = (column, sortDirection) => {
+    if (column.sortField) {
+      setSort(sortDirection)
+      setSortField(column.sortField)
+    }
+  }
+
   return (
     <div className='main-header navbar-light card header-overlap'>
       <div className='d-flex justify-content-between p-3'>
@@ -132,7 +160,7 @@ function Employee() {
         paginationServer
         noDataComponent="There are no data to display"
         columns={OrdersColumns}
-        // onSort={handleSort}
+        onSort={handleSort}
         className='overflow-hidden overflow-x-scroll'
         paginationComponent={CustomPagination}
         progressPending={loader}

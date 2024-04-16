@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Cartalyst\Sentinel\Laravel\Facades\Sentinel;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,11 +12,15 @@ class UserController extends Controller
     public function authUser() {
         try {  
             $userData = Auth::user(); 
-            $sentinel = Sentinel::findRoleById($userData->id);
+            $user = User::find($userData->id);
+            $data = ($user->roles()->get())[0]->id;
+
+            $rolesByUser['user'] = $user;
+            $rolesByUser['role'] = Sentinel::findRoleById($data);
 
             $response = [
                 'success' => true,
-                'data' => $sentinel,
+                'data' => $rolesByUser,
                 'message' => 'data retrieved successfully'
             ];
             return response()->json($response, 200);

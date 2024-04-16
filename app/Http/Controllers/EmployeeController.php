@@ -10,7 +10,7 @@ class EmployeeController extends Controller
 {
     public function EmployeeData (Request $request) {
         try {
-            if ($request->page) $data = Employee::paginate($request->perPage);
+            if ($request->page) $data = Employee::orderBy($request->sort_by, $request->order_by)->paginate($request->perPage);
             else $data = Employee::all();
             
             $response = [

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\TrackerController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -39,5 +40,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/calendar/{event_id}/edit', [CalendarController::class, 'edit']);
     Route::delete('/calendar/{event_id}/delete', [CalendarController::class, 'delete']);
     Route::post('/calendar/all', [CalendarController::class, 'getCalendarData']);
+
+    Route::post('/tracker/add', [TrackerController::class, 'add']);
+    Route::get('/tracker/getTracker', [TrackerController::class, 'getTrackerData']);
+
 });
 

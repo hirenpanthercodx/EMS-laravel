@@ -19,7 +19,8 @@ function Login() {
         AuthService.login({ email: data?.email, password: data?.password })
         .then(res => { 
             toast.success(res?.data?.message)
-            localStorage.setItem('userData', JSON.stringify(res?.data?.data?.data))
+            const data = { user: res?.data?.data?.data?.user, role: res?.data?.data?.data?.role }
+            localStorage.setItem('userData', JSON.stringify(data))
             localStorage.setItem('token', res?.data?.data?.token)
             navigate('/')
             location.reload();

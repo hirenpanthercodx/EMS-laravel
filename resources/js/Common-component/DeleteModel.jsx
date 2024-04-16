@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { Button, CardText, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap'
 
-function DeleteModel({ title, body, deleteModel, setDeleteModel, deleteButton }) {
+function DeleteModel({ title, body, deleteModel, setDeleteModel, deleteButton, yes='Delete', no='Cancel', ifNo=true }) {
   return (
     <Fragment>
         <Modal isOpen={deleteModel} toggle={() => setDeleteModel(!deleteModel)} className={`modal-dialog-centered modal-md`}>
@@ -12,8 +12,8 @@ function DeleteModel({ title, body, deleteModel, setDeleteModel, deleteButton })
                 <CardText className=''>{body}</CardText>
             </ModalBody>
             <ModalFooter style={{border: 'none'}}>
-                <Button color='success' onClick={() => setDeleteModel(!deleteModel)}>Cancel</Button>
-                <Button color='danger' onClick={() => deleteButton()}>Delete</Button>
+                {ifNo && <Button color='success' onClick={() => setDeleteModel(!deleteModel)}>{no}</Button>}
+                <Button color='danger' onClick={() => deleteButton()}>{yes}</Button>
             </ModalFooter>
         </Modal>
     </Fragment>

@@ -7,10 +7,12 @@ import { Toaster } from 'react-hot-toast';
         const Index = ReactDOM.createRoot(document.getElementById("example"));
      
         Index.render(
-            <React.StrictMode>
+            // <React.StrictMode>
+            <>
                 <Toaster position='top-right' toastOptions={{ className: 'react-hot-toast' }}/>
                 <Router />
-            </React.StrictMode>
+            </>
+            // </React.StrictMode>
         )
     }
 
