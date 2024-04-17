@@ -70,7 +70,9 @@ function Employee() {
       minwidth: '50px',
       maxwidth:"200px",
       className: 'line-ellipsis',
-      selector: row => row?.gender
+      selector: row => (
+          <div style={{textTransform: 'capitalize'}}>{row?.gender}</div>
+      )
     },
     {
       name: 'Department',
@@ -78,7 +80,9 @@ function Employee() {
       minwidth: '50px',
       maxwidth:"200px",
       className: 'line-ellipsis',
-      selector: row => row?.department
+      selector: row => (
+        <div style={{textTransform: 'capitalize'}}>{row?.department}</div>
+    )
     },
     {
       name: 'Project',
@@ -86,9 +90,11 @@ function Employee() {
       minwidth: '180px',
       className: 'line-ellipsis',
       selector: row =>  (
-        JSON.parse(row?.project)?.map((data, i) => {
-          return data + (((JSON.parse(row?.project))?.length - 1 > i) ? ", " : "") 
-        }) 
+        <div style={{textTransform: 'capitalize'}}>
+          {JSON.parse(row?.project)?.map((data, i) => {
+            return data + (((JSON.parse(row?.project))?.length - 1 > i) ? ", " : "")
+          })}
+        </div>
       )
     },
     {
@@ -98,11 +104,7 @@ function Employee() {
       maxwidth:'150px',
       minwidth: '180px',
       className: 'line-ellipsis',
-      selector: row =>  (
-        JSON.parse(row?.project)?.map((data, i) => {
-          return data + (((JSON.parse(row?.project))?.length - 1 > i) ? ", " : "") 
-        }) 
-      )
+      selector: row => moment(row?.created_at).format('DD-MM-YYYY')
     }    
   ]
 

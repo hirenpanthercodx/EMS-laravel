@@ -5,6 +5,7 @@ import { Button, Input } from 'reactstrap'
 import { TrackerService } from '../Service/Tracker'
 import toast from 'react-hot-toast'
 import DeleteModel from '../Common-component/DeleteModel'
+import { Icon } from '@iconify/react'
 
 function NavBar() {
     const navigate = useNavigate()
@@ -18,13 +19,14 @@ function NavBar() {
         time: 0,
         dateStart: 0,
         dateEnd: 0,
-        lastRecordTime: 0,
+        lastRecordTime: Number(localStorage.getItem('lastRecordTime') || 0),
         startTime: 0
     });
 
     const locationName = {
         calendar: 'Calendar',
-        employee: 'Employee'
+        employee: 'Employee',
+        tracker: 'Tracker'
     }
 
     const logout = () => {
@@ -51,28 +53,22 @@ function NavBar() {
         ).slice(-2)}:${('0' + Math.floor((time / 1000) % 60)).slice(-2)}`;
     };
 
-    const dateTimeConverter = (inputDate) => {
-        const date = new Date(inputDate);
-        const [month, day, year] = [date.getMonth(), date.getDate(), date.getFullYear()];
-        const [hour, minutes] = [date.getHours(), date.getMinutes()];
-        return `${('0' + day).slice(-2)}.${('0' + (month + 1)).slice(-2)}.${year} ${('0' + hour).slice(-2)}:${('0' + minutes).slice(-2)}`;
-    };
-
     const startHandler = () => {
         setTimerOn(true);
         setTask({
-        //   time: task.time,
+            //   time: task.time,
             startTime: task.lastRecordTime,
             lastRecordTime: task.lastRecordTime,
             dateStart: new Date().getTime(),
         });
+        localStorage.setItem('tracker', true)
     };
 
     const stopHandler = () => {
         // setTimerOn(false);
         const data = task;
         data.user_id = userData?.user?.id
-        data.time = (task.lastRecordTime - task.startTime) / 1000
+        data.time = task.lastRecordTime - task.startTime
         data.startTime = task.lastRecordTime
         data.lastRecordTime = task.lastRecordTime
         data.description = notes
@@ -84,16 +80,25 @@ function NavBar() {
         TrackerService.saveTracker(data)
         .then((res) => {
             toast.success(res?.data?.message)
+            localStorage.setItem('tracker', false)
         })
         .catch((err) => toast.error(err?.response?.data?.message))
     };
 
     useEffect(() => {
-        if (((task?.lastRecordTime - task?.startTime) /1000) === 60) stopHandler()
-
-        if (task?.lastRecordTime === 28800) {
-            setTimerOn(false)
-            stopHandler()
+        if (task?.lastRecordTime) {
+            if (((task?.lastRecordTime - task?.startTime) /1000) === 600) stopHandler()
+    
+            if ((task?.lastRecordTime / 1000) === 28800) {
+                setTimerOn(false)
+                stopHandler()
+                TrackerService.sendNotificationTracker()
+                .then((res) => {
+                    toast.success(res?.data?.message)
+                })
+                .catch((err) => toast.error(err?.response?.data?.message))
+            }
+            localStorage.setItem('lastRecordTime', Number(task?.lastRecordTime))
         }
     }, [task])
     
@@ -120,14 +125,9 @@ function NavBar() {
     }, [timerOn, task.description, task.dateStart]);
 
     useEffect(() => {
-        const date = {date: moment(new Date()).format('YYYY-MM-DD')}
-        TrackerService.getTrackerDetail(date)
-        .then((res) => {
-            const data = res?.data[res?.data?.length - 1]
+        if (localStorage.getItem('tracker') === 'true') startHandler()
 
-            setTask({ lastRecordTime: Number(data?.lastRecordTime || 0)  });
-        })
-        .catch((err) => toast.error(err?.response?.data?.message))
+        if (location.pathname.split('/')[1] === '') navigate('/tracker')
     }, [])
     
     return (
@@ -155,15 +155,19 @@ function NavBar() {
                             {timeConverter(task.lastRecordTime)}
                         </div>
                         <div>
-                            {!timerOn && 
-                                <Button className='btn-success' onClick={startHandler}>
-                                    Start Tracking
-                                </Button>
-                            }
                             {timerOn && 
-                                <Button className='btn-danger' onClick={() => { setTimerOn(false); setOpenNotes(true) }}>
-                                    Stop Tracking
-                                </Button>
+                                <div style={{padding: '14px', backgroundColor: '#fd7179', borderRadius: '50%', cursor: 'pointer'}} 
+                                    data-toggle="tooltip" data-placement="top" title="Stop Tracker"
+                                    onClick={() => { setTimerOn(false); setOpenNotes(true) }}>
+                                    <Icon icon="ph:square-thin" width={10} style={{color: 'white', backgroundColor: 'white'}} />
+                                </div>
+                            }
+                            {!timerOn && 
+                                <div style={{padding: '10px', backgroundColor: '#bcbaba', borderRadius: '50%', cursor: 'pointer'}} 
+                                    data-toggle="tooltip" data-placement="top" title="Start Tracker"
+                                    onClick={startHandler} >
+                                    <Icon icon="ph:play-fill" width={20} />
+                                </div>
                             }
                         </div>
                     </div>

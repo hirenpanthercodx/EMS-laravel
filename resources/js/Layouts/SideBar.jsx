@@ -21,9 +21,9 @@ function Sidebar() {
           <nav className="mt-2">
             <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">         
               <li className="nav-item">
-                <span className={`${window.location.href.includes('dashboard') && 'active'} nav-link `} onClick={() => navigate(`/dashboard`)}>
+                <span className={`${window.location.href.includes('tracker') && 'active'} nav-link `} onClick={() => navigate(`/tracker`)}>
                   <i className="nav-icon fas fa-columns" />
-                  <p>Dashboard</p>
+                  <p>Tracker</p>
                 </span>
               </li> 
               {userData?.role?.permissions?.view_calendar &&

@@ -43,6 +43,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('/tracker/add', [TrackerController::class, 'add']);
     Route::get('/tracker/getTracker', [TrackerController::class, 'getTrackerData']);
-
+    Route::get('/tracker/getTracker/date', [TrackerController::class, 'getTrackerDataByDate']);
+    Route::get('/tracker/sendNotification', [TrackerController::class, 'sendNotification']);
 });
 
