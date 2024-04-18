@@ -15,12 +15,14 @@ function NavBar() {
     const [timerOn, setTimerOn] = useState(false);
     const [openNotes, setOpenNotes] = useState(false)
     const [notes, setNotes] = useState('')
+    const [manualStop, setManualStop] = useState(0)
     const [task, setTask] = useState({
         time: 0,
-        dateStart: 0,
+        dateStart: Number(localStorage.getItem('dateStart') || new Date().getTime()),
         dateEnd: 0,
         lastRecordTime: Number(localStorage.getItem('lastRecordTime') || 0),
-        startTime: 0
+        startTime: Number(localStorage.getItem('startRecordTime') || 0),
+        autoStop: Number(localStorage.getItem('autoStop') || 0)
     });
 
     const locationName = {
@@ -58,36 +60,57 @@ function NavBar() {
         setTask({
             //   time: task.time,
             startTime: task.lastRecordTime,
+            autoStop: task.lastRecordTime,
             lastRecordTime: task.lastRecordTime,
-            dateStart: new Date().getTime(),
+            dateStart: new Date().getTime()
         });
+        const data = {
+            user_id: userData?.user?.id, 
+            is_create_mode: true,
+            dateStart: new Date()
+        }
+        TrackerService.saveTracker(data)
+        .then((res) => {
+            toast.success(res?.data?.message)
+        })
+        .catch((err) => toast.error(err?.response?.data?.message))
         localStorage.setItem('tracker', true)
+        localStorage.setItem('startRecordTime', Number(task.lastRecordTime))
+        localStorage.setItem('autoStop', Number(task.lastRecordTime))
+        localStorage.setItem('dateStart', Number(new Date().getTime()))
     };
 
     const stopHandler = () => {
         // setTimerOn(false);
+        localStorage.setItem('autoStop', Number(task.lastRecordTime))
+
         const data = task;
         data.user_id = userData?.user?.id
-        data.time = task.lastRecordTime - task.startTime
-        data.startTime = task.lastRecordTime
-        data.lastRecordTime = task.lastRecordTime
+        data.time = task.lastRecordTime - task?.startTime
+        data.startTime = manualStop ? task?.lastRecordTime : task?.startTime
+        data.autoStop = task?.lastRecordTime
+        data.lastRecordTime = task?.lastRecordTime
         data.description = notes
-        data.dateStart =  new Date(task.dateStart)
+        data.dateStart =  new Date(task?.dateStart)
         data.dateEnd = new Date()
+        data.manualStop = manualStop
+        data.is_create_mode = false
+        data.currentDate = moment(task?.dateStart).format('YYYY-MM-DD')
         
         setTask(data);
         setOpenNotes(false);
         TrackerService.saveTracker(data)
         .then((res) => {
             toast.success(res?.data?.message)
-            localStorage.setItem('tracker', false)
+            setManualStop(0)
+            // localStorage.setItem('tracker', false)
         })
         .catch((err) => toast.error(err?.response?.data?.message))
     };
 
     useEffect(() => {
         if (task?.lastRecordTime) {
-            if (((task?.lastRecordTime - task?.startTime) /1000) === 600) stopHandler()
+            if (((task?.lastRecordTime - task?.autoStop) /1000) === 600) stopHandler()
     
             if ((task?.lastRecordTime / 1000) === 28800) {
                 setTimerOn(false)
@@ -95,28 +118,29 @@ function NavBar() {
                 TrackerService.sendNotificationTracker()
                 .then((res) => {
                     toast.success(res?.data?.message)
+                    localStorage.setItem('tracker', false)
                 })
                 .catch((err) => toast.error(err?.response?.data?.message))
             }
             localStorage.setItem('lastRecordTime', Number(task?.lastRecordTime))
         }
     }, [task])
-    
 
     useEffect(() => {
         let interval;
     
         if (timerOn) {
-          interval = setInterval(() => {
-            setTask((prevTask) => {
-              return {
-                // time: prevTask.time + 1000,
-                startTime: prevTask.startTime,
-                lastRecordTime: prevTask.lastRecordTime + 1000,
-                dateStart: task.dateStart,
-              };
-            });
-          }, 1000);
+            interval = setInterval(() => {
+                setTask((prevTask) => {
+                    return {
+                        // time: prevTask.time + 1000,
+                        startTime: prevTask.startTime,
+                        autoStop: prevTask.autoStop,
+                        lastRecordTime: prevTask.lastRecordTime + 1000,
+                        dateStart: task.dateStart,
+                    };
+                });
+            }, 1000);
         } else if (!timerOn) {
         //   clearInterval(interval);
         }
@@ -125,7 +149,7 @@ function NavBar() {
     }, [timerOn, task.description, task.dateStart]);
 
     useEffect(() => {
-        if (localStorage.getItem('tracker') === 'true') startHandler()
+        if (localStorage.getItem('tracker') === 'true') setTimerOn(true);
 
         if (location.pathname.split('/')[1] === '') navigate('/tracker')
     }, [])
@@ -158,7 +182,7 @@ function NavBar() {
                             {timerOn && 
                                 <div style={{padding: '14px', backgroundColor: '#fd7179', borderRadius: '50%', cursor: 'pointer'}} 
                                     data-toggle="tooltip" data-placement="top" title="Stop Tracker"
-                                    onClick={() => { setTimerOn(false); setOpenNotes(true) }}>
+                                    onClick={() => { setTimerOn(false); setOpenNotes(true); setManualStop(1); localStorage.setItem('tracker', false) }}>
                                     <Icon icon="ph:square-thin" width={10} style={{color: 'white', backgroundColor: 'white'}} />
                                 </div>
                             }

@@ -111,32 +111,32 @@ function Employee() {
   const CustomPagination = () => {
     const count = Number(Math.ceil(totalRecord / 10))
     if (totalRecord > 10) {
-        return (
-            <Fragment>
-                <div className="f_flex m-0">
-                    <b className="me-auto"> {totalRecord?.toLocaleString().trim("")} Results</b>
-                    <div className="margin">
-                        <ReactPaginate
-                            previousLabel={'<'}
-                            nextLabel={'>'}
-                            pageCount={count || 1}
-                            activeClassName='active'
-                            forcePage={currentPage !== 0 ? currentPage - 1 : 0}
-                            onPageChange={page => setCurrentPage(page.selected + 1)}
-                            pageClassName={'page-item'}
-                            nextLinkClassName={'page-link'}
-                            nextClassName={'page-item next'}
-                            previousClassName={'page-item prev'}
-                            previousLinkClassName={'page-link'}
-                            pageLinkClassName={'page-link'}
-                            containerClassName={'pagination react-paginate justify-content-end my-2 pe-1'}
-                        />
-                    </div>
-                </div>
-            </Fragment>
-        )
+      return (
+        <Fragment>
+          <div className="f_flex m-0">
+            <b className="me-auto"> {totalRecord?.toLocaleString().trim("")} Results</b>
+            <div className="margin">
+              <ReactPaginate
+                previousLabel={'<'}
+                nextLabel={'>'}
+                pageCount={count || 1}
+                activeClassName='active'
+                forcePage={currentPage !== 0 ? currentPage - 1 : 0}
+                onPageChange={page => setCurrentPage(page.selected + 1)}
+                pageClassName={'page-item'}
+                nextLinkClassName={'page-link'}
+                nextClassName={'page-item next'}
+                previousClassName={'page-item prev'}
+                previousLinkClassName={'page-link'}
+                pageLinkClassName={'page-link'}
+                containerClassName={'pagination react-paginate justify-content-end my-2 pe-1'}
+              />
+            </div>
+          </div>
+        </Fragment>
+      )
     } else {
-        return <div className="pb-2"></div>
+      return <div className="pb-2"></div>
     }
   }
 
@@ -169,38 +169,6 @@ function Employee() {
         progressComponent={<Spinner />}
         data={emplyee}
 		  />
-      {/* <div className="table-responsive">
-        <table className="table">
-          <thead className='thead-light' style={{zIndex: '100'}}>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Gender</th>
-              <th>Department</th>
-              <th>Project</th>
-            </tr>
-          </thead>
-          <tbody>
-            {emplyee?.map((item, i) => {
-              return(
-                <tr key={i} onClick={() => navigate(`/employee/edit/${item?.id}`)} style={{cursor: 'pointer'}}>
-                  <td>{item?.employee_id}</td>
-                  <td>{item?.name}</td>
-                  <td>{item?.email}</td>
-                  <td style={{textTransform: 'capitalize'}}>{item?.gender}</td>
-                  <td style={{textTransform: 'capitalize'}}>{item?.department}</td>
-                  <td style={{textTransform: 'capitalize'}}>
-                    {JSON.parse(item?.project)?.map((data, i) => {
-                      return data + (((JSON.parse(item?.project))?.length - 1 > i) ? ", " : "") 
-                    })}  
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div> */}
     </div>
   )
 }

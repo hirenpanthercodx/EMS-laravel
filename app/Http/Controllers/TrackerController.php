@@ -11,18 +11,27 @@ class TrackerController extends Controller
 {
     public function add (Request $request) {
         try {  
-            $tracker = new Tracker();
-            $tracker->user_id = $request?->user_id;
-            $tracker->time = $request?->time;
-            $tracker->description = $request->description;
-            $tracker->dateStart = $request?->dateStart;
-            $tracker->dateEnd = $request?->dateEnd;
-            $tracker->lastRecordTime = $request?->lastRecordTime;
-            $tracker->save(); 
+            if ($request->is_create_mode) {
+                $tracker = new Tracker();
+                $tracker->user_id = $request?->user_id;
+                $tracker->dateStart = $request?->dateStart;
+                $tracker->save(); 
+            } else {
+                $id = Auth::User()->id;
+                $trackerId = Tracker::where('user_id', $id)->where('dateStart', "like", "%$request?->currentDate%")->latest()->first();
+                $UpdateTracker = Tracker::findOrFail($trackerId?->id);
+                $UpdateTracker->user_id = $request?->user_id;
+                $UpdateTracker->time = $request?->time;
+                $UpdateTracker->description = $request->description;
+                $UpdateTracker->dateStart = $request?->dateStart;
+                $UpdateTracker->dateEnd = $request?->dateEnd;
+                $UpdateTracker->lastRecordTime = $request?->lastRecordTime;
+                $UpdateTracker->update(); 
+            }
 
             $response = [
                 'success' => true,
-                'message' => 'Tracker save successfully'
+                'message' => $request->is_create_mode ? 'Tracker start successfully' : ($request->manualStop ? 'Tracker stop successfully' : 'Time added to current Tracker')
             ];
 
             return response()->json($response, 200);
