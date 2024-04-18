@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { AuthService } from '../Service/Auth'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Input } from 'reactstrap'
@@ -6,6 +6,7 @@ import { TrackerService } from '../Service/Tracker'
 import toast from 'react-hot-toast'
 import DeleteModel from '../Common-component/DeleteModel'
 import { Icon } from '@iconify/react'
+import { FilterDetails } from '../routes'
 
 function NavBar() {
     const navigate = useNavigate()
@@ -16,6 +17,8 @@ function NavBar() {
     const [openNotes, setOpenNotes] = useState(false)
     const [notes, setNotes] = useState('')
     const [manualStop, setManualStop] = useState(0)
+    const [newTrackerId, setNewTrackerId] = useState(Number(localStorage.getItem('newTrackerId')) || null)
+    const [filterValue, setFilterValue] = useContext(FilterDetails)
     const [task, setTask] = useState({
         time: 0,
         dateStart: Number(localStorage.getItem('dateStart') || new Date().getTime()),
@@ -71,7 +74,9 @@ function NavBar() {
         }
         TrackerService.saveTracker(data)
         .then((res) => {
+            setNewTrackerId(res?.data?.data?.id)
             toast.success(res?.data?.message)
+            localStorage.setItem('newTrackerId', Number(res?.data?.data?.id))
         })
         .catch((err) => toast.error(err?.response?.data?.message))
         localStorage.setItem('tracker', true)
@@ -79,6 +84,13 @@ function NavBar() {
         localStorage.setItem('autoStop', Number(task.lastRecordTime))
         localStorage.setItem('dateStart', Number(new Date().getTime()))
     };
+
+    const stopTracker = () => {
+        setTimerOn(false); 
+        setOpenNotes(true); 
+        setManualStop(1); 
+        localStorage.setItem('tracker', false)
+    }
 
     const stopHandler = () => {
         // setTimerOn(false);
@@ -95,7 +107,7 @@ function NavBar() {
         data.dateEnd = new Date()
         data.manualStop = manualStop
         data.is_create_mode = false
-        data.currentDate = moment(task?.dateStart).format('YYYY-MM-DD')
+        data.newTrackerId = newTrackerId
         
         setTask(data);
         setOpenNotes(false);
@@ -103,6 +115,7 @@ function NavBar() {
         .then((res) => {
             toast.success(res?.data?.message)
             setManualStop(0)
+            setFilterValue({ ...filterValue, tracker_stop: true })
             // localStorage.setItem('tracker', false)
         })
         .catch((err) => toast.error(err?.response?.data?.message))
@@ -150,8 +163,24 @@ function NavBar() {
 
     useEffect(() => {
         if (localStorage.getItem('tracker') === 'true') setTimerOn(true);
-
         if (location.pathname.split('/')[1] === '') navigate('/tracker')
+
+        const data = { tracker_id: newTrackerId }
+        TrackerService.getTrackerDetail(data)
+        .then((res) => {
+            if (moment(res.data?.dateStart).format('YYYY-MM-DD') !== moment(new Date()).format('YYYY-MM-DD')) {
+                setTimerOn(false);
+                setTask({
+                    time: 0,
+                    dateStart: 0,
+                    dateEnd: 0,
+                    lastRecordTime: 0,
+                    startTime: 0,
+                    autoStop: 0
+                });
+            }
+        })
+        .catch((err) => toast.error(err?.response?.data?.message))
     }, [])
     
     return (
@@ -182,7 +211,7 @@ function NavBar() {
                             {timerOn && 
                                 <div style={{padding: '14px', backgroundColor: '#fd7179', borderRadius: '50%', cursor: 'pointer'}} 
                                     data-toggle="tooltip" data-placement="top" title="Stop Tracker"
-                                    onClick={() => { setTimerOn(false); setOpenNotes(true); setManualStop(1); localStorage.setItem('tracker', false) }}>
+                                    onClick={stopTracker}>
                                     <Icon icon="ph:square-thin" width={10} style={{color: 'white', backgroundColor: 'white'}} />
                                 </div>
                             }

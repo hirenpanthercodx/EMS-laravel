@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useContext, useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
 import toast from 'react-hot-toast'
 import { TrackerService } from '../../Service/Tracker'
@@ -6,6 +6,7 @@ import Flatpickr from 'react-flatpickr'
 import "flatpickr/dist/themes/material_green.css";
 import { Spinner } from 'reactstrap'
 import ReactPaginate from 'react-paginate'
+import { FilterDetails } from '../../routes'
 
 function TrackerDashboard() {
     const [trackerDate, setTrackerDate] = useState(moment().format('YYYY-MM-DD'))
@@ -13,6 +14,7 @@ function TrackerDashboard() {
     const [totalRecord, setTotalRecord] = useState([])
     const [currentPage, setCurrentPage] = useState(1)
     const [loader, setLoader] = useState(false)
+    const [filterValue] = useContext(FilterDetails)
 
     const timeConverter = (time) => {
         return `${('0' + Math.floor((time / 3600000) % 60)).slice(-2)}:${(
@@ -29,13 +31,13 @@ function TrackerDashboard() {
         {
             name: 'Start',
             className: 'line-ellipsis',
-            selector: row => moment(row?.dateStart).format('hh:mm A')
+            selector: row => row?.dateStart ? moment(row?.dateStart).format('hh:mm A') : ''
         },
         {
             name: 'End',
             sortField: 'project',
             className: 'line-ellipsis',
-            selector: row => moment(row?.dateEnd).format('hh:mm A')
+            selector: row => row?.dateEnd ? moment(row?.dateEnd).format('hh:mm A') : ''
         },
         {
             name: 'Note',
@@ -59,7 +61,7 @@ function TrackerDashboard() {
         })
         .catch((err) => toast.error(err?.response?.data?.message))
         .finally(() => setLoader(false))
-    }, [trackerDate, currentPage])
+    }, [trackerDate, currentPage, filterValue?.tracker_stop])
   
     const CustomPagination = () => {
         const count = Number(Math.ceil(totalRecord / 10))

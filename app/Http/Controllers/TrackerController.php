@@ -11,26 +11,26 @@ class TrackerController extends Controller
 {
     public function add (Request $request) {
         try {  
+                $tracker = '';
             if ($request->is_create_mode) {
                 $tracker = new Tracker();
                 $tracker->user_id = $request?->user_id;
                 $tracker->dateStart = $request?->dateStart;
                 $tracker->save(); 
             } else {
-                $id = Auth::User()->id;
-                $trackerId = Tracker::where('user_id', $id)->where('dateStart', "like", "%$request?->currentDate%")->latest()->first();
-                $UpdateTracker = Tracker::findOrFail($trackerId?->id);
-                $UpdateTracker->user_id = $request?->user_id;
-                $UpdateTracker->time = $request?->time;
-                $UpdateTracker->description = $request->description;
-                $UpdateTracker->dateStart = $request?->dateStart;
-                $UpdateTracker->dateEnd = $request?->dateEnd;
-                $UpdateTracker->lastRecordTime = $request?->lastRecordTime;
-                $UpdateTracker->update(); 
+                $tracker = Tracker::find($request?->newTrackerId);
+                $tracker->user_id = $request?->user_id;
+                $tracker->time = $request?->time;
+                $tracker->description = $request->description;
+                $tracker->dateStart = $request?->dateStart;
+                $tracker->dateEnd = $request?->dateEnd;
+                $tracker->lastRecordTime = $request?->lastRecordTime;
+                $tracker->update(); 
             }
 
             $response = [
                 'success' => true,
+                'data' => $tracker,
                 'message' => $request->is_create_mode ? 'Tracker start successfully' : ($request->manualStop ? 'Tracker stop successfully' : 'Time added to current Tracker')
             ];
 
@@ -43,9 +43,7 @@ class TrackerController extends Controller
 
     public function getTrackerData (Request $request) {
         try {  
-            $id = Auth::User()->id;
-            $tracker = Tracker::where('user_id', $id)->where('dateStart', "like", "%$request->date%")->get();
-            return $tracker;
+            $tracker = Tracker::find($request?->tracker_id) ? Tracker::find($request?->tracker_id) : [];
 
             $response = [
                 'success' => true,
