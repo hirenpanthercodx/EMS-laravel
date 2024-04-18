@@ -20,7 +20,6 @@ function NavBar() {
     const [newTrackerId, setNewTrackerId] = useState(Number(localStorage.getItem('newTrackerId')) || null)
     const [filterValue, setFilterValue] = useContext(FilterDetails)
     const [task, setTask] = useState({
-        time: 0,
         dateStart: Number(localStorage.getItem('dateStart') || new Date().getTime()),
         dateEnd: 0,
         lastRecordTime: Number(localStorage.getItem('lastRecordTime') || 0),
@@ -61,7 +60,6 @@ function NavBar() {
     const startHandler = () => {
         setTimerOn(true);
         setTask({
-            //   time: task.time,
             startTime: task.lastRecordTime,
             autoStop: task.lastRecordTime,
             lastRecordTime: task.lastRecordTime,
@@ -93,7 +91,6 @@ function NavBar() {
     }
 
     const stopHandler = () => {
-        // setTimerOn(false);
         localStorage.setItem('autoStop', Number(task.lastRecordTime))
 
         const data = task;
@@ -146,7 +143,6 @@ function NavBar() {
             interval = setInterval(() => {
                 setTask((prevTask) => {
                     return {
-                        // time: prevTask.time + 1000,
                         startTime: prevTask.startTime,
                         autoStop: prevTask.autoStop,
                         lastRecordTime: prevTask.lastRecordTime + 1000,
@@ -159,19 +155,18 @@ function NavBar() {
         }
    
         return () => clearInterval(interval);
-    }, [timerOn, task.description, task.dateStart]);
+    }, [timerOn, task?.dateStart]);
 
     useEffect(() => {
         if (localStorage.getItem('tracker') === 'true') setTimerOn(true);
-        if (location.pathname.split('/')[1] === '') navigate('/tracker')
+        if (location?.pathname.split('/')[1] === '') navigate('/tracker')
 
         const data = { tracker_id: newTrackerId }
         TrackerService.getTrackerDetail(data)
         .then((res) => {
-            if (moment(res.data?.dateStart).format('YYYY-MM-DD') !== moment(new Date()).format('YYYY-MM-DD')) {
+            if (moment(res?.data?.dateStart).format('YYYY-MM-DD') !== moment(new Date()).format('YYYY-MM-DD')) {
                 setTimerOn(false);
                 setTask({
-                    time: 0,
                     dateStart: 0,
                     dateEnd: 0,
                     lastRecordTime: 0,
