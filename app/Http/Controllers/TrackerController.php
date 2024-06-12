@@ -25,6 +25,8 @@ class TrackerController extends Controller
                 $tracker->dateStart = $request?->dateStart;
                 $tracker->dateEnd = $request?->dateEnd;
                 $tracker->lastRecordTime = $request?->lastRecordTime;
+                $tracker->mouseClick = $request?->mouseClick;
+                $tracker->keyBoardClick = $request?->keyBoardClick;
                 $tracker->update(); 
             }
 

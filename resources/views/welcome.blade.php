@@ -43,11 +43,12 @@
 
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
-            <img class="animation__shake" src="dist/img/laravel-vs-react1.png" alt="AdminLTELogo" height="150" width="150">
+            <img class="animation__shake" src="dist/img/logo.png" alt="AdminLTELogo" height="350" width="350">
         </div>
         
         <div id="example"></div>
         @viteReactRefresh
+        {{-- @vite(['resources/js/app.js', "resources/js/page/{$page['component']}.jsx"]) --}}
         @vite('resources/js/app.js')
 
         <!-- jQuery -->

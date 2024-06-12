@@ -14,7 +14,7 @@ function TrackerDashboard() {
     const [totalRecord, setTotalRecord] = useState([])
     const [currentPage, setCurrentPage] = useState(1)
     const [loader, setLoader] = useState(false)
-    const [filterValue] = useContext(FilterDetails)
+    const [filterValue, setFilterValue] = useContext(FilterDetails)
 
     const timeConverter = (time) => {
         return `${('0' + Math.floor((time / 3600000) % 60)).slice(-2)}:${(
@@ -40,6 +40,18 @@ function TrackerDashboard() {
             selector: row => row?.dateEnd ? moment(row?.dateEnd).format('hh:mm A') : ''
         },
         {
+            name: 'Mouse Click',
+            sortField: 'note',
+            className: 'line-ellipsis',
+            selector: row => row?.mouseClick
+        },
+        {
+            name: 'KeyBoard Click',
+            sortField: 'note',
+            className: 'line-ellipsis',
+            selector: row => row?.keyBoardClick
+        },
+        {
             name: 'Note',
             sortField: 'note',
             className: 'line-ellipsis',
@@ -58,6 +70,7 @@ function TrackerDashboard() {
         .then((res) => {
             setTrackerData(res?.data?.data)
             setTotalRecord(res?.data?.total)
+            setFilterValue({...filterValue, tracker_stop: false})
         })
         .catch((err) => toast.error(err?.response?.data?.message))
         .finally(() => setLoader(false))

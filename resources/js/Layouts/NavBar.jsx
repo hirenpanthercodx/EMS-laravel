@@ -27,6 +27,9 @@ function NavBar() {
         autoStop: Number(localStorage.getItem('autoStop') || 0)
     });
 
+    const [keyboardClicks, setKeyboardClicks] = useState(Number(localStorage.getItem('keyboardClicks')) || 0);
+    const [mouseClicks, setMouseClicks] = useState(Number(localStorage.getItem('mouseClicks')) || 0);
+
     const locationName = {
         calendar: 'Calendar',
         employee: 'Employee',
@@ -65,6 +68,9 @@ function NavBar() {
             lastRecordTime: task.lastRecordTime,
             dateStart: new Date().getTime()
         });
+
+        setKeyboardClicks(0);
+        setMouseClicks(0);
         const data = {
             user_id: userData?.user?.id, 
             is_create_mode: true,
@@ -74,6 +80,7 @@ function NavBar() {
         .then((res) => {
             setNewTrackerId(res?.data?.data?.id)
             toast.success(res?.data?.message)
+            setFilterValue({ ...filterValue, tracker_stop: true })
             localStorage.setItem('newTrackerId', Number(res?.data?.data?.id))
         })
         .catch((err) => toast.error(err?.response?.data?.message))
@@ -81,6 +88,8 @@ function NavBar() {
         localStorage.setItem('startRecordTime', Number(task.lastRecordTime))
         localStorage.setItem('autoStop', Number(task.lastRecordTime))
         localStorage.setItem('dateStart', Number(new Date().getTime()))
+        localStorage.setItem('keyboardClicks', 0)
+        localStorage.setItem('mouseClicks', 0)
     };
 
     const stopTracker = () => {
@@ -105,6 +114,8 @@ function NavBar() {
         data.manualStop = manualStop
         data.is_create_mode = false
         data.newTrackerId = newTrackerId
+        data.mouseClick = mouseClicks
+        data.keyBoardClick = keyboardClicks
         
         setTask(data);
         setOpenNotes(false);
@@ -138,7 +149,6 @@ function NavBar() {
 
     useEffect(() => {
         let interval;
-    
         if (timerOn) {
             interval = setInterval(() => {
                 setTask((prevTask) => {
@@ -155,7 +165,7 @@ function NavBar() {
         }
    
         return () => clearInterval(interval);
-    }, [timerOn, task?.dateStart]);
+    }, [timerOn, task?.lastRecordTime]);
 
     useEffect(() => {
         if (localStorage.getItem('tracker') === 'true') setTimerOn(true);
@@ -164,8 +174,18 @@ function NavBar() {
         const data = { tracker_id: newTrackerId }
         TrackerService.getTrackerDetail(data)
         .then((res) => {
-            if (moment(res?.data?.dateStart).format('YYYY-MM-DD') !== moment(new Date()).format('YYYY-MM-DD')) {
+            if (moment(res?.data?.data?.dateStart).format('YYYY-MM-DD') !== moment(new Date()).format('YYYY-MM-DD')) {
                 setTimerOn(false);
+                setKeyboardClicks(0);
+                setMouseClicks(0);
+
+                localStorage.setItem('tracker', false);
+                localStorage.setItem('startRecordTime', 0)
+                localStorage.setItem('autoStop', 0)
+                localStorage.setItem('dateStart', 0)
+                localStorage.setItem('newTrackerId', null)
+                localStorage.setItem('keyboardClicks', 0)
+                localStorage.setItem('mouseClicks', 0)
                 setTask({
                     dateStart: 0,
                     dateEnd: 0,
@@ -177,6 +197,28 @@ function NavBar() {
         })
         .catch((err) => toast.error(err?.response?.data?.message))
     }, [])
+
+    function keyPress() {
+        setKeyboardClicks(pre => pre+1);
+    }
+
+    function keyClick() {
+        setMouseClicks(pre => pre+1);
+    }
+
+    useEffect(() => {
+        document.addEventListener('keydown', keyPress);
+        document.addEventListener('click', keyClick);
+        return () => {
+            document.removeEventListener('keydown', keyPress);
+            document.removeEventListener('click', keyClick);
+        };
+    }, [])
+    
+    if (timerOn) {
+        localStorage.setItem('keyboardClicks', keyboardClicks);
+        localStorage.setItem('mouseClicks', mouseClicks);    
+    }
     
     return (
         <>
